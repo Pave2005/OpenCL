@@ -3,34 +3,29 @@
 #include <random>
 #include <string>
 #include <fstream>
-#include <exception>
 
-int main ()
-try
-{
-    int data_size = 0;
+template <typename Iter>
+void rand_init (Iter start, Iter end, int low, int up) {
+    static std::mt19937_64 mt_source;
+    std::uniform_int_distribution<int> dist(low, up);
+    for (Iter cur = start; cur != end; ++cur) *cur = dist(mt_source);
+}
+
+int main () {
+    size_t data_size = 0;
     std::string filename;
 
     std::cin >> data_size >> filename;
 
     std::ofstream file(filename);
-    if (!file) throw std::runtime_error("file error");
 
-    file << data_size << std::endl;
+    file << data_size << "\n";
 
-	std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(-10000, 10000);
+	std::vector<int>vector(data_size);
+    rand_init(vector.rbegin(), vector.rend(), -100000, 100000);
 
-    for (size_t id = 0; id < data_size; ++id)
-    {
-        file << dis(gen) << std::endl;
-    }
+    for (int i = 0; i < vector.size(); ++i) file << vector[i] << "\n";
 
     file.close();
-}
-catch (std::exception& expt)
-{
-    std::cout << expt.what() << std::endl;
-    return 1;
+
 }

@@ -16,6 +16,7 @@ add_executable(bsort ./main.cpp)
 target_include_directories(bsort PRIVATE
 	                       ${CMAKE_SOURCE_DIR}/include
 	                       ${CMAKE_SOURCE_DIR}/utils
+						   ${CMAKE_SOURCE_DIR}/config
 	                       ${OpenCL_INCLUDE_DIRS})
 
 target_link_libraries(bsort PRIVATE ${OpenCL_LIBRARIES})

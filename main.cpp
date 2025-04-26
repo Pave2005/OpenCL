@@ -1,52 +1,52 @@
-#include "bitonic_sort.h"
+#include "ocl.hpp"
+#include "utils.hpp"
+#include "config.hpp"
 
-#include <iostream>
 #include <vector>
-#include <fstream>
-#include <cmath>
+#include <iostream>
+#include <string>
+#include <numeric>
+#include <chrono>
 #include <limits>
 #include <bit>
 
-int main() try
-{
-    std::size_t data_size = 0;
+#include <cmath>
 
-    std::cin >> data_size;
-    if (data_size <= 0) throw std::runtime_error("invalid size error");
+constexpr size_t data_size = (1 << 26);
+// constexpr size_t data_size = std::bit_floor<size_t>(std::numeric_limits<int>::max());
 
-    std::vector<int> data = {};
-    data.reserve(data_size);
 
-    for (int i = 0; i < data_size; ++i)
-    {
-        int elem = 0;
+int main (int argc, char* argv[]) {
+    ocl::Ocl app(argv[1]);
+    size_t size = data_size;
+    if (argc > 2) size = std::atoi(argv[2]);
 
-        std::cin >> elem;
-        if (!std::cin.good()) throw std::runtime_error("invalid argument error");
+    std::vector<cl_int> cl_vector(size);
 
-        data.push_back(elem);
-    }
+    utils::rand_init(cl_vector.rbegin(), cl_vector.rend(), -100000, 100000);
 
-    std::size_t new_size = std::bit_ceil(data_size);
-    data.resize(new_size, std::numeric_limits<int>::max());
+    std::cout << "Data size: " << size << " elements\n";
 
-    OpenCL::OclApp<int> app {"kernels/bitonic_sort.cl", "bitonicSort", data};
-    bitonic::BitonicSort<int> bsrt = {app, data};
+    auto StartTime = std::chrono::high_resolution_clock::now();
+    app.writeToBuffer(cl_vector.data(), size);
+    uint64_t ev_time = app.run();
+    app.readFromBuffer(cl_vector.data());
+    auto EndTime = std::chrono::high_resolution_clock::now();
 
-    bsrt.sort(data);
+    auto Dur = std::chrono::duration_cast<std::chrono::nanoseconds>(EndTime - StartTime).count();
+    std::cout << "GPU wall time measured\t(" << size << "): \t" << Dur << " ns" << std::endl;
+    std::cout << "GPU pure time measured\t(" << size << "): \t" << ev_time << " ns" << std::endl;
 
-    data.resize(data_size);
+    cl::vector<TYPE> cpu_vector(size);
+    utils::rand_init(cpu_vector.begin(), cpu_vector.end(), -100000, 100000);
 
-    bitonic::utils::dump(data);
+    StartTime = std::chrono::high_resolution_clock::now();
+    std::sort(cpu_vector.begin(), cpu_vector.end());
+    EndTime = std::chrono::high_resolution_clock::now();
 
-}
-catch(const std::exception& exception )
-{
-    std::cerr << exception.what() << std::endl;
-    return 1;
-}
-catch (...)
-{
-    std::cerr << "Caught unknown exception" << std::endl;
-    return 1;
+    Dur = std::chrono::duration_cast<std::chrono::nanoseconds>(EndTime - StartTime).count();
+    std::cout << "CPU time measured with\t(" << size << "): \t" << Dur << " ns" << std::endl;
+
+    if (std::is_sorted(cl_vector.begin(), cl_vector.end())) std::cout << "sorted correctly\n";
+    else                                                    std::cout << "sorted incorrectly\n";
 }

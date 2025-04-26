@@ -1,8 +1,9 @@
-#include <string>
+#include "funcs.hpp"
 
 #include <gtest/gtest.h>
 
-#include "funcs.h"
+#include <string>
+
 
 TEST(test1, e2e)
 {
@@ -15,6 +16,16 @@ TEST(test2, e2e)
 }
 
 TEST(test3, e2e)
+{
+	test_funcs::run_test("/test3.dat");
+}
+
+TEST(test4, e2e)
+{
+	test_funcs::run_test("/test3.dat");
+}
+
+TEST(test5, e2e)
 {
 	test_funcs::run_test("/test3.dat");
 }

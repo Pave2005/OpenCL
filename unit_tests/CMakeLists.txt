@@ -23,6 +23,8 @@ target_link_libraries(tests
 target_include_directories(tests PRIVATE
 	                       ${CMAKE_SOURCE_DIR}/include
                            ${CMAKE_SOURCE_DIR}/unit_tests
+						   ${CMAKE_SOURCE_DIR}/config
+						   ${CMAKE_SOURCE_DIR}/utils
 						   ${OpenCL_INCLUDE_DIRS})
 
 enable_testing()
