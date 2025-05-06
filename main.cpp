@@ -15,7 +15,6 @@
 
 constexpr size_t data_size = (1 << 26);
 
-
 int main (int argc, char* argv[]) {
     ocl::Ocl app(argv[1]);
     size_t size = data_size;

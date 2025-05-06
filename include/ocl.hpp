@@ -25,43 +25,43 @@
     else std::cout
 
 
-namespace detail {
-    class DeviceInfo {
-    private:
-        cl::size_type max_lcl_mem_size_;
-        cl::size_type lcl_size_;
-        cl::size_type work_group_size_;
-        cl::size_type glb_size_;
-
-    public:
-        DeviceInfo (const cl::Device& dev) {
-            work_group_size_  = dev.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
-            glb_size_ = dev.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>();
-
-            cl_int max_lcl_mem = dev.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>();
-            max_lcl_mem_size_ = max_lcl_mem / sizeof(TYPE);
-
-            lcl_size_ = std::bit_floor<size_t>(max_lcl_mem / sizeof(TYPE));
-            if (max_lcl_mem_size_ - lcl_size_ < 1024) lcl_size_ <<= 1;
-
-            dbgs << "Maximum work-group size: " << work_group_size_ << std::endl;
-            dbgs << "Maximum global size: " << glb_size_ << std::endl;
-
-            dbgs << "Maximum local memory size: " << max_lcl_mem_size_ << std::endl;
-            dbgs << "Modified local memory size: " << lcl_size_ << std::endl;
-        }
-
-        cl::size_type get_local_mem_size () { return lcl_size_; }
-
-        cl::size_type get_work_group_size (int elems_num) {
-            if (elems_num < work_group_size_) return elems_num;
-
-            return work_group_size_;
-        }
-    };
-}
-
 namespace ocl {
+    namespace details {
+        class DeviceInfo {
+        private:
+            cl::size_type max_lcl_mem_size_;
+            cl::size_type lcl_size_;
+            cl::size_type work_group_size_;
+            cl::size_type glb_size_;
+
+        public:
+            DeviceInfo (const cl::Device& dev) {
+                work_group_size_  = dev.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
+                glb_size_ = dev.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>();
+
+                cl_int max_lcl_mem = dev.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>();
+                max_lcl_mem_size_ = max_lcl_mem / sizeof(TYPE);
+
+                lcl_size_ = std::bit_floor<size_t>(max_lcl_mem / sizeof(TYPE));
+                if (max_lcl_mem_size_ - lcl_size_ < 1024) lcl_size_ <<= 1;
+
+                dbgs << "Maximum work-group size: " << work_group_size_ << std::endl;
+                dbgs << "Maximum global size: " << glb_size_ << std::endl;
+
+                dbgs << "Maximum local memory size: " << max_lcl_mem_size_ << std::endl;
+                dbgs << "Modified local memory size: " << lcl_size_ << std::endl;
+            }
+
+            cl::size_type get_local_mem_size () { return lcl_size_; }
+
+            cl::size_type get_work_group_size (int elems_num) {
+                if (elems_num < work_group_size_) return elems_num;
+
+                return work_group_size_;
+            }
+        };
+    }
+
     class Ocl {
     private:
         cl::Platform     platform_;
@@ -74,7 +74,7 @@ namespace ocl {
         cl::Buffer       buffer_;
         cl::size_type    elems_num_;
 
-        detail::DeviceInfo info_;
+        details::DeviceInfo info_;
 
         static cl::Platform get_platform () {
             std::vector<cl::Platform> platforms;
