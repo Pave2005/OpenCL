@@ -14,7 +14,6 @@
 #include <cmath>
 
 constexpr size_t data_size = (1 << 26);
-// constexpr size_t data_size = std::bit_floor<size_t>(std::numeric_limits<int>::max());
 
 
 int main (int argc, char* argv[]) {
@@ -52,11 +51,11 @@ int main (int argc, char* argv[]) {
     utils::rand_init(bitonic_cpu_vector.begin(), bitonic_cpu_vector.end(), -100000, 100000);
 
     StartTime = std::chrono::high_resolution_clock::now();
-    bitonic_cpu::bitonic_sort(bitonic_cpu_vector.size(), bitonic_cpu_vector.data());
+    bitonic_cpu::bitonic_sort<TYPE>(bitonic_cpu_vector.size(), bitonic_cpu_vector.data());
     EndTime = std::chrono::high_resolution_clock::now();
 
     Dur = std::chrono::duration_cast<std::chrono::nanoseconds>(EndTime - StartTime).count();
-    std::cout << "btnc CPU time measured\t(" << size << "): \t" << Dur << " ns" << std::endl;
+    std::cout << "CPU btnc time measured\t(" << size << "): \t" << Dur << " ns" << std::endl;
 
     if (std::is_sorted(cl_vector.begin(), cl_vector.end())) std::cout << "sorted correctly\n";
     else                                                    std::cout << "sorted incorrectly\n";

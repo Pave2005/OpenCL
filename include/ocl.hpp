@@ -34,7 +34,6 @@ namespace detail {
         cl::size_type glb_size_;
 
     public:
-
         DeviceInfo (const cl::Device& dev) {
             work_group_size_  = dev.getInfo<CL_DEVICE_MAX_WORK_GROUP_SIZE>();
             glb_size_ = dev.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>();
@@ -184,7 +183,7 @@ namespace ocl {
             return cycle_dur;
         }
 
-        void writeToBuffer (TYPE* input, int size) {
+        void writeToBuffer (TYPE* input, size_t size) {
             assert(size % 2 == 0);
 
             auto StartWriteTime = std::chrono::high_resolution_clock::now();
