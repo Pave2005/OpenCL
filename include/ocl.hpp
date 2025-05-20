@@ -209,7 +209,10 @@ namespace ocl {
 
             elems_num_ = size;
             cl::size_type buf_size = size * sizeof(buffer_elem_type);
-            buffer_ = cl::Buffer(context_, CL_MEM_READ_WRITE, buf_size);
+
+            // utils::bit_reversal_permutation(input, size);
+
+            buffer_ = cl::Buffer(context_, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, buf_size);
             queue_.enqueueWriteBuffer(buffer_, CL_TRUE, 0, buf_size, input);
 
             auto EndWriteTime = std::chrono::high_resolution_clock::now();
