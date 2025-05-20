@@ -12,7 +12,7 @@
 
 namespace utils {
     template <typename Iter>
-    void rand_init (Iter start, Iter end, TYPE low, TYPE up) {
+    void rand_init (Iter start, Iter end, int low, int up) {
         static std::mt19937_64 mt_source;
         std::uniform_int_distribution<int> dist(low, up);
         for (Iter cur = start; cur != end; ++cur) *cur = dist(mt_source);
