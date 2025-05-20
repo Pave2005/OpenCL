@@ -6,7 +6,6 @@
 #include <numeric>
 #include <functional>
 
-constexpr size_t CHUNK_SIZE = 1 << 26;
 constexpr int THREAD_COUNT = 4;
 
 namespace multithreading {
