@@ -31,7 +31,6 @@ int main (int argc, char* argv[]) {
     auto StartTime = std::chrono::high_resolution_clock::now();
     app.writeToBuffer(cl_vector.data(), cl_vector.size());
     uint64_t ev_time = app.run();
-    // uint64_t ev_time = app.slow_run();
     app.readFromBuffer(cl_vector.data());
     auto EndTime = std::chrono::high_resolution_clock::now();
 
